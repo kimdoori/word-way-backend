@@ -1,0 +1,3 @@
+[flake8]
+max-line-length = 79
+application-import-names = word_way
