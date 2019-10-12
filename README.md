@@ -35,3 +35,17 @@
    ```
    $ ./run.py -d -c dev
    ```
+
+ ### Docker로 실행하기
+
+ 1. 이미지를 빌드합니다.
+
+    ```bash
+    docker build -t word-way/backend .
+    ```
+
+ 1. 컨테이너를 실행합니다.
+
+    ```bash
+    docker run --rm -d -p <Port Number You Want>:2222 -v $PWD/word_way:/app/word_way word-way/backend:latest
+    ```
