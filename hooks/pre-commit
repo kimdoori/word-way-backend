@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -e
+
+if [ "$GIT_AUTHOR_DATE" ]; then
+  # Existing $GIT_AUTHOR_DATE environment variable implies that it's executed
+  # by Git as a pre-commit hooks.  In this case Git guarantees the current
+  # working directory (CWD), i.e. $PWD, is the project root directory.
+  project_root="$PWD"
+elif env | grep '^GIT_PREFIX='; then
+  # Existing $GIT_PREFIX environment variable implies that it's executed
+  # by Git as a pre-push hooks.
+  project_root="$PWD"
+else
+  project_root="$(dirname "$0")"
+fi
+
+bash $project_root/scripts/lint.sh
