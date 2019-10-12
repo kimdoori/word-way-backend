@@ -11,7 +11,7 @@ __all__ = 'create_app',
 
 
 @typechecked
-def create_app(config_name: str):
+def create_app(config_name: str) -> Flask:
     app = Flask(__name__)
     app.register_blueprint(api)
     config = load_config(config_name)
