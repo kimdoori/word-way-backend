@@ -1,4 +1,4 @@
-# 글길 백엔드
+# 글길 백엔드 [![Build Status]](https://travis-ci.org/word-way/word-way-backend)
 
 개요
 ---
@@ -54,3 +54,5 @@
     ```bash
     docker run --rm -d -p <Port Number You Want>:2222 -v $PWD/word_way:/app/word_way word-way/backend:latest
     ```
+
+[Build Status]: https://travis-ci.org/word-way/word-way-backend.svg?branch=master
