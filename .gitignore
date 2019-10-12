@@ -128,4 +128,8 @@ dmypy.json
 *.conf
 
 # Editor config
+# vscode
 .vscode/
+
+# Pycharm
+.idea/
