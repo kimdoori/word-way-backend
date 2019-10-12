@@ -24,7 +24,7 @@
 
 - dependencies 설치
    ```
-   $ ./install.sh
+   $ ./scripts/install.sh
    ```
 
 
