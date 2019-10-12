@@ -1,0 +1,27 @@
+language: python
+python:
+- 3.6
+- 3.7
+install:
+- pip install -r dev-requirements.txt
+script:
+- chmod +x ./scripts/lint.sh
+- bash ./scripts/lint.sh
+- pytest
+deploy:
+- provider: script
+  script: bash scripts/deploy.sh staging
+  on:
+    branch: word-way/develop
+- provider: script
+  script: bash scripts/deploy.sh production
+  on:
+    branch: word-way/master
+notifications:
+  slack:
+    rooms:
+      secure: jYJZF7GKhWnPS8CofPcW6uRQ5P0k5ulTY7JOHLoQI6vj2baoXS8EP38DK0oVBk2GyXLZ05gqZU7gEbgKuZSI3UvnKu0SLyEqma/ua3HmAHg+hlMyphsyVK0ye8R4seu8OEWx8TrLYFN2wiwej4DGG/j3vO6W+zWSptJJ3gaodoPOA9CgTMD1+fW9mZxfXIkEFsTcaw6NCnOroku8A7rePv8su3L6xXv8o1J+pivP3QYWY/B/8hZHfMfDByI+2gPF/K/qmbS1VEsJKLyaOC2LEhrAYgmfQL21QEhBMHTt4I9jNHFp1JG/Wi4ABt4z9ly+RxVPzLm3sKC4fUubFvN7ExnVCVEzljX1vze9zWnXh4SPtHdvJrQOfrkJzKetvDph2dmW/lHe/ySLQD/Pom9yz1SGcBhY05jA6PIqENZEkhC+cx6nJkvWgl1QfSU6P+uYsOOzoY3NFMRQP9yaHFMBudsRd8aOr07+t4ucTss7rUYgk/LOLLOr/N9mAJ4430NmqUHe1CTAh0iZ9F7AFF6/Gqv2s05P+PtSoryxy1zrGhLnoXi9mJzU2OsFTcPoi8iVEe6/lfEqXPs+jf9RoKTYZfiBk/mjKn4NcmKwH+kKk5mo+qFjtFuIiJYn6wu84epPQzg4UZk5LMEQH4/X1NvyowIsiFZpxpxTOdMLmTvW1/E=
+    on_success: always
+    on_start: change
+  email: false
+  on_pull_requests: true
