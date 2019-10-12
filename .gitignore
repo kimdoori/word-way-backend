@@ -126,3 +126,6 @@ dmypy.json
 
 # app config
 *.conf
+
+# Editor config
+.vscode/
