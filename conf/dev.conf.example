@@ -1,0 +1,3 @@
+[web]
+DEBUG = true
+SECRET_KEY = helloworld

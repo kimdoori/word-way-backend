@@ -1,29 +1,16 @@
 """:mod:`word_way.config` --- Word Way application configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
-__all__ = 'config',
+from configparser import ConfigParser
+from typeguard import typechecked
+
+__all__ = 'load_config',
 
 
-class Configuration:
-    DEBUG = False
-
-
-class DevConfiguration(Configuration):
-    DEBUG = True
-
-
-class TestConfiguration(Configuration):
-    DEBUG = True
-    TESTING = True
-
-
-class ProdConfiguration(Configuration):
-    DEBUG = False
-    name = 'prod'
-
-
-config = dict(
-    dev=DevConfiguration,
-    test=TestConfiguration,
-    prod=ProdConfiguration,
-)
+@typechecked
+def load_config(config_name: str) -> ConfigParser:
+    config = ConfigParser()
+    # 옵션 이름을 case sensitive 하게 가져오기 위해서
+    config.optionxform = str
+    config.read(f'conf/{config_name}.conf')
+    return config

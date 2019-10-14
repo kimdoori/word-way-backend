@@ -31,7 +31,12 @@
 실행하는 법
 --------
 
-웹 서버를 실행합니다.
+- dev.conf 파일을 생성합니다.
+   ```
+   $ cp conf/dev.conf.example conf/dev.conf
+   ```
+
+- 웹 서버를 실행합니다.
    ```
    $ ./run.py -d -c dev
    ```
