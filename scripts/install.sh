@@ -7,7 +7,10 @@ if [[ "$VIRTUAL_ENV" = "" ]]; then
   exit 1
 fi
 
-git config core.hooksPath "$PWD/git/hooks/"
+if [[ ! -f .git/hooks/pre-commit ]]; then
+  cwd="$( cd "$(dirname "$0")/.." ; pwd -P )"
+  git config core.hooksPath "$cwd/hooks"
+fi
 
 pip install --upgrade pip
 pip install -r dev-requirements.txt
