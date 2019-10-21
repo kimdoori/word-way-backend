@@ -11,7 +11,7 @@ deploy:
 - provider: script
   script: bash scripts/deploy.sh staging
   on:
-    branch: word-way/develop
+    branch: develop
 - provider: script
   script: bash scripts/deploy.sh production
   on:
