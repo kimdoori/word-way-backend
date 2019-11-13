@@ -42,6 +42,7 @@
    ```
    $ ./scripts/install.sh
    ```
+   만약 `flake8` 실행시 `segmentation fault`가 발생한다면 재설치하거나 venv 밖의 flake8을 사용해주세요.
 
 
 실행하는 법
