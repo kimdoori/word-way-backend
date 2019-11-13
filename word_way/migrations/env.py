@@ -6,6 +6,7 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 from logging.config import fileConfig
 
+from werkzeug.utils import find_modules, import_string
 
 sys.path.insert(0, os.getcwd())
 from word_way.orm import Base  # noqa
@@ -46,7 +47,8 @@ def run_migrations_offline():
     """
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=url, target_metadata=target_metadata, literal_binds=True)
+        url=url, target_metadata=target_metadata, literal_binds=True
+    )
 
     with context.begin_transaction():
         context.run_migrations()
@@ -73,6 +75,14 @@ def run_migrations_online():
 
         with context.begin_transaction():
             context.run_migrations()
+
+
+def import_all_module():
+    for name in find_modules('word_way', include_packages=True):
+        import_string(name)
+
+
+import_all_module()  # --autogenerate 를 위해 모든 모듈을 import 합니다.
 
 
 if context.is_offline_mode():
