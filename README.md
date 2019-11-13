@@ -14,9 +14,25 @@
 
 설치하는 법
 --------
+- Python 설치
+
+   다른 방법으로 설치하셔도 무방하나 [pyenv](https://github.com/pyenv/pyenv)를 기준으로 설명합니다
+
+   - pyenv 설치
+      ```
+      $ brew install pyenv
+      ```
+   - python 3.7+ 설치
+
+      그냥 설치하면 sqlite3를 못 찾아서 `CFLAGS`를 붙여서 설치합니다.
+      ```
+      $ CFLAGS="-I$(xcrun --show-sdk-path)/usr/include" pyenv install <Python Version>
+      $ pyenv shell <Python Version>
+      ```
 
 - virtualenv 세팅
-(다른 라이브러리를 사용하셔도 무방합니다)
+
+   다른 라이브러리를 사용하셔도 무방합니다
     ```
     $ mkvirtualenv -a `pwd` -p $(which python) venv
     ```
@@ -26,6 +42,7 @@
    ```
    $ ./scripts/install.sh
    ```
+   만약 `flake8` 실행시 `segmentation fault`가 발생한다면 재설치하거나 venv 밖의 flake8을 사용해주세요.
 
 
 실행하는 법

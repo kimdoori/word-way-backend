@@ -14,3 +14,6 @@ fi
 
 pip install --upgrade pip
 pip install -r dev-requirements.txt
+
+# wordnet package 다운로드
+python "$(dirname "$0")/download_wordnet.py"
