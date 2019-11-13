@@ -1,3 +1,7 @@
-[web]
+[WEB]
 DEBUG = true
 SECRET_KEY = helloworld
+
+[DATABASE]
+URL = postgresql://localhost:5432/word-way
+ECHO = true
