@@ -44,17 +44,33 @@
    ```
    만약 `flake8` 실행시 `segmentation fault`가 발생한다면 재설치하거나 venv 밖의 flake8을 사용해주세요.
 
+- 데이터베이스를 세팅합니다.
+   ```bash
+   $ createdb word-way
+   $ alembic upgrade head
+
+### 데이터베이스 마이그레이션
+ 
+ - 작업 중에 모델 변경이 있을 때 새로운 리비전을 생성해줍니다.
+    ```bash
+    alembic revsion --autogenerate
+    ```
+ - 모델 변경이 포함된 코드를 pull 받았을 때 DB를 업그레이드 해줍니다.
+    ```bash
+    alembic upgrade head
+    ```
+
 
 실행하는 법
 --------
 
 - dev.conf 파일을 생성합니다.
-   ```
+   ```bash
    $ cp conf/dev.conf.example conf/dev.conf
    ```
 
 - 웹 서버를 실행합니다.
-   ```
+   ```bash
    $ ./run.py -d -c dev
    ```
 
