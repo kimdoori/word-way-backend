@@ -59,7 +59,7 @@
  
  - 작업 중에 모델 변경이 있을 때 새로운 리비전을 생성해줍니다.
     ```bash
-    alembic revsion --autogenerate
+    alembic revision --autogenerate
     ```
  - 모델 변경이 포함된 코드를 pull 받았을 때 DB를 업그레이드 해줍니다.
     ```bash
