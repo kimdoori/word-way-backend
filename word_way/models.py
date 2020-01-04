@@ -25,7 +25,7 @@ class Pronunciation(Base):
     id = Column(UUIDType, primary_key=True, default=uuid.uuid4)
 
     #: (:class:`str`) 발음
-    pronunciation = Column(Unicode, nullable=False)
+    pronunciation = Column(Unicode, unique=True, nullable=False)
 
     __tablename__ = 'pronunciation'
 
@@ -37,7 +37,7 @@ class Word(Base):
     id = Column(UUIDType, primary_key=True, default=uuid.uuid4)
 
     #: (:class:`int`) 우리말샘 API 에서 사용되는 고유 식별자.
-    target_code = Column(Integer)
+    target_code = Column(Integer, unique=True)
 
     #: (:class:`WordPart`) 단어의 품사
     part = Column(EnumType(WordPart, name='word_part'), nullable=False)
