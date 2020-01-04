@@ -6,6 +6,7 @@ import xml.etree.ElementTree as elemTree
 
 from flask import Blueprint, abort, jsonify, request
 from requests import get as requests_get
+from sqlalchemy import exists
 from urllib.parse import urljoin
 
 from .config import get_word_api_config
@@ -65,6 +66,10 @@ def save_word(
     for item in tree.findall('item'):
         for sense in item.findall('sense'):
             target_code = sense.findtext('target_code')
+            (word_exists, ), = session.query(
+                exists().where(Word.target_code == target_code))
+            if word_exists:
+                continue
             word = Word(
                 target_code=int(target_code),
                 part=convert_word_part(sense.findtext('pos')),
