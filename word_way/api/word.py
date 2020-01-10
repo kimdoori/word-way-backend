@@ -1,4 +1,4 @@
-""":mod:`word_way.word_data` --- 단어 정보 저장(DB)과 관련된 API
+""":mod:`word_way.api.word` --- 단어 정보 저장(DB)과 관련된 API
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 import typing
@@ -9,19 +9,19 @@ from requests import get as requests_get
 from sqlalchemy import exists
 from urllib.parse import urljoin
 
-from .config import get_word_api_config
-from .context import session
-from .models import Pronunciation, Sentence, Word, WordSentenceAssoc
-from .utils import convert_word_part
+from word_way.config import get_word_api_config
+from word_way.context import session
+from word_way.models import Pronunciation, Sentence, Word, WordSentenceAssoc
+from word_way.utils import convert_word_part
 
-__all__ = 'word_data', 'save_word_data',
-
-
-word_data = Blueprint('word_data', __name__, url_prefix='/word_data')
+__all__ = 'word', 'save_word',
 
 
-@word_data.route('/', methods=['POST'])
-def save_word_data():
+word = Blueprint('word', __name__, url_prefix='/word')
+
+
+@word.route('/', methods=['POST'])
+def save_word():
     '''우리말샘 API로 단어 정보를 가져와서 DB에 저장하는 API'''
     params = request.get_json()
     target_word = params.get('word')
@@ -40,14 +40,14 @@ def save_word_data():
     res.raise_for_status()
 
     res_tree = elemTree.fromstring(res.text)
-    words = save_word(target_word, res_tree)
+    words = save_word_info(target_word, res_tree)
     if not words:
         abort(404)
 
     return jsonify(success=True)
 
 
-def save_word(
+def save_word_info(
     target_word: str,
     tree: elemTree.ElementTree
 ) -> typing.Sequence[Word]:
