@@ -77,9 +77,9 @@ def save_word_info(
                 pronunciation_id=pronunciation.id,
             )
             session.add(word)
-            session.commit()
             save_extra_info(word)
             words.append(word)
+    session.commit()
 
     return words
 
@@ -106,7 +106,6 @@ def save_extra_info(word: Word):
     for example_info in sense_info.findall('example_info'):
         sentence = Sentence(sentence=example_info.findtext('example'))
         session.add(sentence)
-        session.commit()
+        session.flush()
         assoc = WordSentenceAssoc(word_id=word.id, sentence_id=sentence.id)
         session.add(assoc)
-    session.commit()
