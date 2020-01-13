@@ -22,7 +22,27 @@ word = Blueprint('word', __name__, url_prefix='/word')
 
 @word.route('/', methods=['POST'])
 def save_word():
-    '''우리말샘 API로 단어 정보를 가져와서 DB에 저장하는 API'''
+    '''우리말샘 API로 단어 정보를 가져와서 DB에 저장하는 API
+
+    .. code-block:: http
+
+       POST /word/
+       Accept: application/json
+       Content-Type: application/json
+
+       {
+           "word": "단어"
+       }
+
+    .. code-block:: http
+
+       HTTP/1.1 200 OK
+
+    :statuscode 200: 정상적인 응답
+    :statuscode 400: 이미 있는 단어를 요청함
+    :statuscode 404: 단어 정보가 없음
+
+    '''
     params = request.get_json()
     target_word = params.get('word')
 
@@ -51,7 +71,15 @@ def save_word_info(
     target_word: str,
     tree: elemTree.ElementTree
 ) -> typing.Sequence[Word]:
-    '''단어 정보를 DB에 저장합니다.'''
+    '''단어 정보를 DB에 저장합니다.
+
+    :param target_word: 정보를 저장할 단어
+    :type target_word: :class:`str`
+    :param tree: 단어 정보 xml tree
+    :type tree: :class:`elemTree.ElementTree`
+    :rtype: :class:`typing.Sequence[Word]`
+
+    '''
 
     pronunciation = session.query(Pronunciation).filter(
         Pronunciation.pronunciation == target_word
@@ -85,7 +113,12 @@ def save_word_info(
 
 
 def save_extra_info(word: Word):
-    '''단어의 예문과 유의어를 가져와 저장합니다.'''
+    '''단어의 예문과 유의어를 가져와 저장합니다.
+
+    :param word: 추가 정보를 저장할 단어
+    :type word: :class:`Word`
+
+    '''
     # 단어 추가 정보 요청
     config = get_word_api_config()
     params = {
