@@ -4,7 +4,7 @@
 import xml.etree.ElementTree as elemTree
 
 from requests import get as requests_get
-from sqlalchemy import exists
+from sqlalchemy import literal
 from urllib.parse import urljoin
 
 from word_way.config import get_word_api_config
@@ -65,8 +65,10 @@ def save_word_info(
     for item in tree.findall('item'):
         for sense in item.findall('sense'):
             target_code = sense.findtext('target_code')
-            (word_exists, ), = session.query(
-                exists().where(Word.target_code == target_code))
+            q = session.query(Word).filter(Word.target_code == target_code)
+            word_exists = session.query(literal(True)).filter(
+                q.exists()
+            ).scalar()
             if word_exists:
                 continue
             word = Word(
