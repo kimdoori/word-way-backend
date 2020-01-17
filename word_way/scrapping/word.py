@@ -1,10 +1,8 @@
-""":mod:`word_way.api.word` --- 단어 정보 저장(DB)과 관련된 API
+""":mod:`word_way.scrapping.word` --- 단어 정보 저장(DB)과 관련된 함수
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
-import typing
 import xml.etree.ElementTree as elemTree
 
-from flask import Blueprint, abort, jsonify, request
 from requests import get as requests_get
 from sqlalchemy import exists
 from urllib.parse import urljoin
@@ -14,37 +12,16 @@ from word_way.context import session
 from word_way.models import Pronunciation, Sentence, Word, WordSentenceAssoc
 from word_way.utils import convert_word_part
 
-__all__ = 'word', 'save_word',
+__all__ = 'save_word',
 
 
-word = Blueprint('word', __name__, url_prefix='/word')
+def save_word(target_word: str) -> None:
+    """우리말샘 API로 단어 정보를 가져와서 DB에 저장하는 함수
 
+    :param target_word: 정보를 저장할 단어
+    :type target_word: :class:`str`
 
-@word.route('/', methods=['POST'])
-def save_word():
-    '''우리말샘 API로 단어 정보를 가져와서 DB에 저장하는 API
-
-    .. code-block:: http
-
-       POST /word/
-       Accept: application/json
-       Content-Type: application/json
-
-       {
-           "word": "단어"
-       }
-
-    .. code-block:: http
-
-       HTTP/1.1 200 OK
-
-    :statuscode 200: 정상적인 응답
-    :statuscode 400: 이미 있는 단어를 요청함
-    :statuscode 404: 단어 정보가 없음
-
-    '''
-    params = request.get_json()
-    target_word = params.get('word')
+    """
 
     # 단어 기본 정보 요청
     config = get_word_api_config()
@@ -57,29 +34,25 @@ def save_word():
     }
     url = urljoin(config.get('url'), 'search')
     res = requests_get(url, params=params)
-    res.raise_for_status()
+    if not res.ok:
+        return
 
     res_tree = elemTree.fromstring(res.text)
-    words = save_word_info(target_word, res_tree)
-    if not words:
-        abort(404)
-
-    return jsonify(success=True)
+    save_word_info(target_word, res_tree)
 
 
 def save_word_info(
     target_word: str,
-    tree: elemTree.ElementTree
-) -> typing.Sequence[Word]:
-    '''단어 정보를 DB에 저장합니다.
+    tree: elemTree.ElementTree,
+) -> None:
+    """단어 정보를 DB에 저장합니다.
 
     :param target_word: 정보를 저장할 단어
     :type target_word: :class:`str`
     :param tree: 단어 정보 xml tree
-    :type tree: :class:`elemTree.ElementTree`
-    :rtype: :class:`typing.Sequence[Word]`
+    :type tree: :class:`xml.etree.ElementTree.ElementTree`
 
-    '''
+    """
 
     pronunciation = session.query(Pronunciation).filter(
         Pronunciation.pronunciation == target_word
@@ -88,8 +61,6 @@ def save_word_info(
         pronunciation = Pronunciation(pronunciation=target_word)
         session.add(pronunciation)
         session.commit()
-
-    words = []
 
     for item in tree.findall('item'):
         for sense in item.findall('sense'):
@@ -106,19 +77,16 @@ def save_word_info(
             )
             session.add(word)
             save_extra_info(word)
-            words.append(word)
     session.commit()
 
-    return words
 
-
-def save_extra_info(word: Word):
-    '''단어의 예문과 유의어를 가져와 저장합니다.
+def save_extra_info(word: Word) -> None:
+    """단어의 예문과 유의어를 가져와 저장합니다.
 
     :param word: 추가 정보를 저장할 단어
     :type word: :class:`Word`
 
-    '''
+    """
     # 단어 추가 정보 요청
     config = get_word_api_config()
     params = {
@@ -129,7 +97,8 @@ def save_extra_info(word: Word):
     }
     url = urljoin(config.get('url'), 'view')
     res = requests_get(url, params=params)
-    res.raise_for_status()
+    if not res.ok:
+        session.expunge(word)
 
     tree = elemTree.fromstring(res.text)
     sense_info = tree.find('item').find('senseInfo')
