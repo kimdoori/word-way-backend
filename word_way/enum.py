@@ -8,6 +8,7 @@ class WordPart(enum.Enum):
     단어의 품사를 정의합니다.
 
     FIXME: 관형사가 추가되어야 합니다.
+    FIXME: 품사를 한글로 변경해야 합니다.
     """
 
     #: (:class:`str`) 명사
