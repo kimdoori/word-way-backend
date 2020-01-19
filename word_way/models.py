@@ -5,8 +5,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy_enum34 import EnumType
 from sqlalchemy_utils.types.uuid import UUIDType
 
-from .enum import WordPart, WordRelationType
-from .orm import Base
+from word_way.enum import WordPart, WordRelationType
+from word_way.orm import Base
 
 
 __all__ = (

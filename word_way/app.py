@@ -4,8 +4,8 @@
 from flask import Flask
 from typeguard import typechecked
 
-from .api import api
-from .config import load_config
+from word_way.api import api
+from word_way.config import load_config
 
 __all__ = 'create_app',
 

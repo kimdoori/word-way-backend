@@ -1,4 +1,4 @@
-from .enum import WordPart
+from word_way.enum import WordPart
 
 
 def convert_word_part(part: str):
