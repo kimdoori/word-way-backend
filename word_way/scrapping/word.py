@@ -37,22 +37,7 @@ def save_word(target_word: str) -> None:
     if not res.ok:
         return
 
-    res_tree = elemTree.fromstring(res.text)
-    save_word_info(target_word, res_tree)
-
-
-def save_word_info(
-    target_word: str,
-    tree: elemTree.ElementTree,
-) -> None:
-    """단어 정보를 DB에 저장합니다.
-
-    :param target_word: 정보를 저장할 단어
-    :type target_word: :class:`str`
-    :param tree: 단어 정보 xml tree
-    :type tree: :class:`xml.etree.ElementTree.ElementTree`
-
-    """
+    tree = elemTree.fromstring(res.text)
 
     pronunciation = session.query(Pronunciation).filter(
         Pronunciation.pronunciation == target_word
