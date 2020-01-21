@@ -5,8 +5,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy_enum34 import EnumType
 from sqlalchemy_utils.types.uuid import UUIDType
 
-from .enum import WordPart, WordRelationType
-from .orm import Base
+from word_way.enum import WordPart, WordRelationType
+from word_way.orm import Base
 
 
 __all__ = (
@@ -25,7 +25,7 @@ class Pronunciation(Base):
     id = Column(UUIDType, primary_key=True, default=uuid.uuid4)
 
     #: (:class:`str`) 발음
-    pronunciation = Column(Unicode, nullable=False)
+    pronunciation = Column(Unicode, unique=True, nullable=False)
 
     __tablename__ = 'pronunciation'
 
@@ -37,7 +37,7 @@ class Word(Base):
     id = Column(UUIDType, primary_key=True, default=uuid.uuid4)
 
     #: (:class:`int`) 우리말샘 API 에서 사용되는 고유 식별자.
-    target_code = Column(Integer)
+    target_code = Column(Integer, unique=True)
 
     #: (:class:`WordPart`) 단어의 품사
     part = Column(EnumType(WordPart, name='word_part'), nullable=False)

@@ -37,6 +37,12 @@
     $ mkvirtualenv -a `pwd` -p $(which python) venv
     ```
 
+- 필요한 환경 변수 셋팅
+
+   [우리말샘 API](https://opendict.korean.go.kr/) 토큰
+   ```
+   $ export WORD_API_TOKEN=<Token>
+   ```
 
 - dependencies 설치
    ```
@@ -53,7 +59,7 @@
  
  - 작업 중에 모델 변경이 있을 때 새로운 리비전을 생성해줍니다.
     ```bash
-    alembic revsion --autogenerate
+    alembic revision --autogenerate
     ```
  - 모델 변경이 포함된 코드를 pull 받았을 때 DB를 업그레이드 해줍니다.
     ```bash

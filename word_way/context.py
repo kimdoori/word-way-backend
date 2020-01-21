@@ -3,7 +3,7 @@ import typing
 from flask import current_app, request
 from werkzeug.local import LocalProxy
 
-from .orm import Session, create_engine
+from word_way.orm import Session, create_engine
 
 
 @LocalProxy
