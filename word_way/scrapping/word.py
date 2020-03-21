@@ -5,21 +5,23 @@ import xml.etree.ElementTree as elemTree
 
 from requests import get as requests_get
 from sqlalchemy import literal
+from sqlalchemy.orm.session import Session
 from urllib.parse import urljoin
 
 from word_way.config import get_word_api_config
-from word_way.context import session
 from word_way.models import Pronunciation, Sentence, Word, WordSentenceAssoc
 from word_way.utils import convert_word_part
 
 __all__ = 'save_word',
 
 
-def save_word(target_word: str) -> None:
+def save_word(target_word: str, session: Session) -> None:
     """우리말샘 API로 단어 정보를 가져와서 DB에 저장하는 함수
 
     :param target_word: 정보를 저장할 단어
     :type target_word: :class:`str`
+    :param session: 사용할 세션
+    :type session: :class:`sqlalchemy.orm.session.Session`
 
     """
 
@@ -63,15 +65,17 @@ def save_word(target_word: str) -> None:
                 pronunciation_id=pronunciation.id,
             )
             session.add(word)
-            save_extra_info(word)
+            save_extra_info(word, session)
     session.commit()
 
 
-def save_extra_info(word: Word) -> None:
+def save_extra_info(word: Word, session: Session) -> None:
     """단어의 예문과 유의어를 가져와 저장합니다.
 
     :param word: 추가 정보를 저장할 단어
     :type word: :class:`Word`
+    :param session: 사용할 세션
+    :type session: :class:`sqlalchemy.orm.session.Session
 
     """
     # 단어 추가 정보 요청
