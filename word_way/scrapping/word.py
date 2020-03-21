@@ -44,6 +44,8 @@ def save_word(target_word: str, session: Session) -> None:
         pronunciation_word = item.findtext('word')
         if not pronunciation_word:
             continue
+        pronunciation_word = \
+            pronunciation_word.replace('-', '').replace('^', ' ')
         pronunciation = session.query(Pronunciation).filter(
             Pronunciation.pronunciation == pronunciation_word
         ).one_or_none()
