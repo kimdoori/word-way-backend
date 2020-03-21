@@ -40,16 +40,17 @@ def save_word(target_word: str, session: Session) -> None:
         return
 
     tree = elemTree.fromstring(res.text)
-
-    pronunciation = session.query(Pronunciation).filter(
-        Pronunciation.pronunciation == target_word
-    ).one_or_none()
-    if not pronunciation:
-        pronunciation = Pronunciation(pronunciation=target_word)
-        session.add(pronunciation)
-        session.commit()
-
     for item in tree.findall('item'):
+        pronunciation_word = item.findtext('word')
+        if not pronunciation_word:
+            continue
+        pronunciation = session.query(Pronunciation).filter(
+            Pronunciation.pronunciation == pronunciation_word
+        ).one_or_none()
+        if not pronunciation:
+            pronunciation = Pronunciation(pronunciation=pronunciation_word)
+            session.add(pronunciation)
+            session.flush()
         for sense in item.findall('sense'):
             target_code = sense.findtext('target_code')
             q = session.query(Word).filter(Word.target_code == target_code)
