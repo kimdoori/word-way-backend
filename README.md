@@ -54,6 +54,11 @@
    ```bash
    $ createdb word-way
    $ alembic upgrade head
+   ```
+   - 단어 데이터를 준비하려면 스크립트를 실행합니다.
+      ```bash
+      $ python init_word.py -c dev
+      ```
 
 ### 데이터베이스 마이그레이션
  
