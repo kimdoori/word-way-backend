@@ -43,4 +43,9 @@ class WordRelationType(enum.Enum):
     """단어와 단어의 관계를 나타내는 종류입니다."""
 
     #: (:class:`str`) 동의어
+    #: 의미가 비슷한 단어간의 관계
     synonyms = 'synonyms'
+
+    #: (:class:`str`) 포함어
+    #: 의미에 포함된 단어 관계
+    include = 'include'

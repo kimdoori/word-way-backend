@@ -10,7 +10,13 @@ from word_way.orm import Base
 
 
 __all__ = (
-    'Word', 'Sentence', 'WordSentenceAssoc', 'Pronunciation', 'WordRelation',
+    'Pronunciation',
+    'Word',
+    'Sentence',
+    'WordSentenceAssoc',
+    'WordRelation',
+    'SynonymsWordRelation',
+    'IncludeWordRelation',
 )
 
 
@@ -100,29 +106,70 @@ class WordRelation(Base):
     #: (:class:`uuid.UUID`) 고유 식별자.
     id = Column(UUIDType, primary_key=True, default=uuid.uuid4)
 
-    #: (:class:`uuid.UUID`) 단어 고유 식별자.
-    word_id = Column(UUIDType, ForeignKey(Word.id))
-
-    #: (:class:`uuid.UUID`) 관련된 단어 식별자.
-    relation_word_id = Column(UUIDType, ForeignKey(Word.id), nullable=True)
-
-    #: (:class:`uuid.UUID`) 관련된 발음 식별자.
-    relation_pronunciation_id = Column(
-        UUIDType, ForeignKey(Pronunciation.id), nullable=True,
-    )
-
     #: (:class:`WordRelationType`) 단어간의 관계 종류
     type = Column(
         EnumType(WordRelationType, name='word_relation_type'),
         nullable=False,
     )
 
+    __mapper_args__ = {'polymorphic_on': type}
+
+    __tablename__ = 'word_relation'
+
+
+class SynonymsWordRelation(WordRelation):
+    #: (:class:`uuid.UUID`) 고유 식별자.
+    id = Column(UUIDType, ForeignKey(WordRelation.id), primary_key=True)
+
+    #: (:class:`uuid.UUID`) 발음 고유 식별자.
+    criteria_id = Column(
+        'pronunciation_id',
+        UUIDType,
+        ForeignKey(Pronunciation.id),
+    )
+
+    #: (:class:`uuid.UUID`) 관련된 발음 식별자.
+    relation_id = Column(
+        'related_pronunciation_id',
+        UUIDType,
+        ForeignKey(Pronunciation.id),
+    )
+
+    __table_args__ = (
+        UniqueConstraint(
+            'pronunciation_id',
+            'related_pronunciation_id',
+            name='uq_criteria_and_related_for_synonyms_relation',
+        ),
+    )
+
+    __mapper_args__ = {'polymorphic_identity': WordRelationType.synonyms}
+
+    __tablename__ = 'synonyms_word_relation'
+
+
+class IncludeWordRelation(WordRelation):
+    #: (:class:`uuid.UUID`) 고유 식별자.
+    id = Column(UUIDType, ForeignKey(WordRelation.id), primary_key=True)
+
+    #: (:class:`uuid.UUID`) 단어 고유 식별자.
+    criteria_id = Column('word_id', UUIDType, ForeignKey(Word.id))
+
+    #: (:class:`uuid.UUID`) 관련된 발음 식별자.
+    relation_id = Column(
+        'related_pronunciation_id',
+        UUIDType,
+        ForeignKey(Pronunciation.id),
+    )
+
     __table_args__ = (
         UniqueConstraint(
             'word_id',
-            'relation_word_id',
-            'relation_pronunciation_id',
-            name='uq_word_relation_word_and_pronunciation',
+            'related_pronunciation_id',
+            name='uq_criteria_and_related_for_included_relation',
         ),
     )
-    __tablename__ = 'word_relation'
+
+    __mapper_args__ = {'polymorphic_identity': WordRelationType.include}
+
+    __tablename__ = 'include_word_relation'
