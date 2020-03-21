@@ -1,6 +1,8 @@
 """:mod:`word_way.scrapping.word` --- 단어 정보 저장(DB)과 관련된 함수
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
+import typing
+import uuid
 import xml.etree.ElementTree as elemTree
 
 from requests import get as requests_get
@@ -15,13 +17,17 @@ from word_way.utils import convert_word_part
 __all__ = 'save_word',
 
 
-def save_word(target_word: str, session: Session) -> None:
+def save_word(
+    target_word: str, session: Session,
+) -> typing.Optional[uuid.UUID]:
     """우리말샘 API로 단어 정보를 가져와서 DB에 저장하는 함수
 
     :param target_word: 정보를 저장할 단어
     :type target_word: :class:`str`
     :param session: 사용할 세션
     :type session: :class:`sqlalchemy.orm.session.Session`
+    :return: target_word와 발음이 정확히 일치하는 발음 ID
+    :rtype: typing.Optional[uuid.UUID]
 
     """
 
@@ -39,6 +45,7 @@ def save_word(target_word: str, session: Session) -> None:
     if not res.ok:
         return
 
+    pronunciation_id = None
     tree = elemTree.fromstring(res.text)
     for item in tree.findall('item'):
         pronunciation_word = item.findtext('word')
@@ -53,6 +60,8 @@ def save_word(target_word: str, session: Session) -> None:
             pronunciation = Pronunciation(pronunciation=pronunciation_word)
             session.add(pronunciation)
             session.flush()
+        if pronunciation_word == target_word:
+            pronunciation_id = pronunciation.id
         for sense in item.findall('sense'):
             target_code = sense.findtext('target_code')
             q = session.query(Word).filter(Word.target_code == target_code)
@@ -70,6 +79,7 @@ def save_word(target_word: str, session: Session) -> None:
             session.add(word)
             save_extra_info(word, session)
     session.commit()
+    return pronunciation_id
 
 
 def save_extra_info(word: Word, session: Session) -> None:
