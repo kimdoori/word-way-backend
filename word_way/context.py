@@ -1,14 +1,10 @@
 import typing
 
-from flask import current_app, request
+from flask import request
 from werkzeug.local import LocalProxy
 
+from word_way.config import current_config
 from word_way.orm import Session, create_engine
-
-
-@LocalProxy
-def current_config() -> typing.Mapping:
-    return current_app.config['APP_CONFIG']
 
 
 @LocalProxy
@@ -17,7 +13,7 @@ def session() -> Session:
     try:
         session = ctx._current_session
     except AttributeError:
-        ctx._current_session = session = create_session(current_config)
+        ctx._current_session = session = create_session(current_config())
     finally:
         return session
 

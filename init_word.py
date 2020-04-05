@@ -10,7 +10,7 @@ from sqlalchemy.orm.session import Session
 
 from word_way.app import create_app
 from word_way.scrapping.word import save_word
-from word_way.context import create_session, current_config
+from word_way.context import create_session
 from word_way.models import SynonymsWordRelation
 
 parser = argparse.ArgumentParser(
@@ -31,7 +31,8 @@ def main():
     args = parser.parse_args()
     wsgi_app = create_app(args.config)
     with wsgi_app.app_context():
-        session = create_session(current_config)
+        config = wsgi_app.config['APP_CONFIG']
+        session = create_session(config)
         scrap_synonyms(session, args.line)
 
 
