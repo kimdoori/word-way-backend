@@ -10,11 +10,18 @@ from sqlalchemy import literal
 from sqlalchemy.orm.session import Session
 from urllib.parse import urljoin
 
+from word_way.celery import celery
+from word_way.context import session
 from word_way.config import get_word_api_config
 from word_way.models import Pronunciation, Sentence, Word, WordSentenceAssoc
 from word_way.utils import convert_word_part
 
-__all__ = 'save_word',
+__all__ = 'save_word', 'save_word_task',
+
+
+@celery.task
+def save_word_task(target_word: str):
+    save_word(target_word, session)
 
 
 def save_word(
