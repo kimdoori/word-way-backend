@@ -17,8 +17,10 @@ def session() -> Session:
     try:
         session = ctx._current_session
     except AttributeError:
-        ctx._current_session = session = Session(
-            bind=create_engine(current_config)
-        )
+        ctx._current_session = session = create_session(current_config)
     finally:
         return session
+
+
+def create_session(config: typing.Mapping) -> Session:
+    return Session(bind=create_engine(config))
