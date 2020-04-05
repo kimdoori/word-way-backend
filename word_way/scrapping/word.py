@@ -84,6 +84,7 @@ def save_word(
                 pronunciation_id=pronunciation.id,
             )
             session.add(word)
+            session.flush()
             save_extra_info(word, session)
     session.commit()
     return pronunciation_id
@@ -122,3 +123,4 @@ def save_extra_info(word: Word, session: Session) -> None:
         session.flush()
         assoc = WordSentenceAssoc(word_id=word.id, sentence_id=sentence.id)
         session.add(assoc)
+        session.flush()
