@@ -21,7 +21,7 @@ def session() -> Session:
     try:
         session = ctx._current_session
     except AttributeError:
-        ctx._current_session = session = create_session(current_config())
+        ctx._current_session = session = create_session(current_config)
     finally:
         return session
 

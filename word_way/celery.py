@@ -19,7 +19,7 @@ class Loader(BaseLoader):
 
     def read_configuration(self, env='CELERY_CONFIG_MODULE'):
         if has_app_context():
-            config = current_config()
+            config = current_config
         else:
             config_name = os.environ.get(env)
             if config_name is not None:
