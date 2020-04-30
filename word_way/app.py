@@ -2,6 +2,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 from flask import Flask
+from flask_cors import CORS
 from typeguard import typechecked
 
 from word_way.api import api
@@ -19,4 +20,6 @@ def create_app(config_name: str) -> Flask:
     config = load_config(config_name)
     app.config.update(config['WEB'])
     app.config['APP_CONFIG'] = config
+    CORS(app, origins=config['WEB']['CROSS_ORIGIN_URLS'])
+
     return app
