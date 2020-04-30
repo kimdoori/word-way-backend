@@ -1,3 +1,4 @@
+import typing
 import uuid
 
 from sqlalchemy import Column, ForeignKey, Integer, Unicode, UniqueConstraint
@@ -33,6 +34,24 @@ class Pronunciation(Base):
     #: (:class:`str`) 발음
     pronunciation = Column(Unicode, unique=True, nullable=False)
 
+    words = relationship('Word', uselist=True, back_populates='pronunciation')
+
+    word_relation = relationship(
+        'SynonymsWordRelation',
+        uselist=True,
+        primaryjoin="SynonymsWordRelation.criteria_id==Pronunciation.id",
+        back_populates='criteria_words',
+    )
+
+    @property
+    def related_synonyms_pronunciations(self) -> typing.Sequence[str]:
+        pronunciation = []
+        for relation in self.word_relation:
+            pronunciation += [
+                p.pronunciation for p in relation.related_pronunciations
+            ]
+        return pronunciation
+
     __tablename__ = 'pronunciation'
 
 
@@ -57,7 +76,27 @@ class Word(Base):
     )
 
     #: (:class:`Pronunciation`) 발음
-    pronunciation = relationship(Pronunciation, uselist=False)
+    pronunciation = relationship(
+        Pronunciation,
+        uselist=False,
+        back_populates='words',
+    )
+
+    word_relation = relationship(
+        'IncludeWordRelation',
+        uselist=True,
+        primaryjoin="IncludeWordRelation.criteria_id == Word.id",
+        back_populates='criteria_words',
+    )
+
+    @property
+    def related_include_pronunciations(self) -> typing.Sequence[str]:
+        pronunciation = []
+        for relation in self.word_relation:
+            pronunciation += [
+                p.pronunciation for p in relation.related_pronunciations
+            ]
+        return pronunciation
 
     __tablename__ = 'word'
 
@@ -135,6 +174,19 @@ class SynonymsWordRelation(WordRelation):
         ForeignKey(Pronunciation.id),
     )
 
+    criteria_words = relationship(
+        Pronunciation,
+        uselist=False,
+        foreign_keys=[criteria_id],
+        backref='word_relations',
+    )
+
+    related_pronunciations = relationship(
+        Pronunciation,
+        uselist=True,
+        foreign_keys=[relation_id],
+    )
+
     __table_args__ = (
         UniqueConstraint(
             'pronunciation_id',
@@ -160,6 +212,19 @@ class IncludeWordRelation(WordRelation):
         'related_pronunciation_id',
         UUIDType,
         ForeignKey(Pronunciation.id),
+    )
+
+    criteria_words = relationship(
+        Word,
+        uselist=False,
+        foreign_keys=[criteria_id],
+        backref='word_relations',
+    )
+
+    related_pronunciations = relationship(
+        Pronunciation,
+        uselist=True,
+        foreign_keys=[relation_id],
     )
 
     __table_args__ = (
