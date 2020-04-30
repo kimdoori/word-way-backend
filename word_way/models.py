@@ -43,6 +43,15 @@ class Pronunciation(Base):
         back_populates='criteria_words',
     )
 
+    @property
+    def related_synonyms_pronunciations(self) -> typing.Sequence[str]:
+        pronunciation = []
+        for relation in self.word_relation:
+            pronunciation += [
+                p.pronunciation for p in relation.related_pronunciations
+            ]
+        return pronunciation
+
     __tablename__ = 'pronunciation'
 
 
@@ -79,6 +88,15 @@ class Word(Base):
         primaryjoin="IncludeWordRelation.criteria_id == Word.id",
         back_populates='criteria_words',
     )
+
+    @property
+    def related_include_pronunciations(self) -> typing.Sequence[str]:
+        pronunciation = []
+        for relation in self.word_relation:
+            pronunciation += [
+                p.pronunciation for p in relation.related_pronunciations
+            ]
+        return pronunciation
 
     __tablename__ = 'word'
 
