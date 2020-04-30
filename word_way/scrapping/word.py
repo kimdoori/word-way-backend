@@ -16,12 +16,26 @@ from word_way.config import get_word_api_config
 from word_way.models import Pronunciation, Sentence, Word, WordSentenceAssoc
 from word_way.utils import convert_word_part
 
-__all__ = 'save_word', 'save_word_task',
+__all__ = 'save_word', 'save_word_task', 'save_words_task',
 
 
 @celery.task
 def save_word_task(target_word: str):
     save_word(target_word, session)
+
+
+@celery.task
+def save_words_task():
+    """단어가 없는 발음을 가져와서 단어를 저장하는 테스크"""
+    q = session.query(Word).filter(Word.pronunciation_id == Pronunciation.id)
+    pronunciations = session.query(Pronunciation).filter(
+        ~q.exists()
+    ).all()
+    for pronunciation in pronunciations:
+        pronunciation_id = save_word(pronunciation.pronunciation, session)
+        if not pronunciation_id:
+            session.delete(pronunciation)
+            session.commit()
 
 
 def save_word(
