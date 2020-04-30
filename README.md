@@ -85,6 +85,11 @@
    $ ./run.py -d -c dev
    ```
 
+- 워커를 실행합니다.
+   ```bash
+   $ celery -A word_way worker --config dev
+   ```
+
  ### Docker로 실행하기
 
  1. 이미지를 빌드합니다.
